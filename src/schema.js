@@ -5,24 +5,30 @@ import {
   GraphQLID,
   GraphQLString,
   GraphQLList,
-} from 'graphql';
+} from "graphql";
 
 const PersonType = new GraphQLObjectType({
-  name: 'Person',
+  name: "Person",
   fields: {
     id: { type: GraphQLID },
     name: { type: GraphQLString },
+    alwaysFails: {
+      type: GraphQLString,
+      resolve: () => {
+        throw new Error("Failed");
+      },
+    },
   },
 });
 
 const peopleData = [
-  { id: 1, name: 'John Smith' },
-  { id: 2, name: 'Sara Smith' },
-  { id: 3, name: 'Budd Deey' },
+  { id: 1, name: "John Smith" },
+  { id: 2, name: "Sara Smith" },
+  { id: 3, name: "Budd Deey" },
 ];
 
 const QueryType = new GraphQLObjectType({
-  name: 'Query',
+  name: "Query",
   fields: {
     people: {
       type: new GraphQLList(PersonType),
@@ -32,7 +38,7 @@ const QueryType = new GraphQLObjectType({
 });
 
 const MutationType = new GraphQLObjectType({
-  name: 'Mutation',
+  name: "Mutation",
   fields: {
     addPerson: {
       type: PersonType,
@@ -47,9 +53,12 @@ const MutationType = new GraphQLObjectType({
 
         peopleData.push(person);
         return person;
-      }
+      },
     },
   },
 });
 
-export const schema = new GraphQLSchema({ query: QueryType, mutation: MutationType });
+export const schema = new GraphQLSchema({
+  query: QueryType,
+  mutation: MutationType,
+});

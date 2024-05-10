@@ -1,5 +1,4 @@
-/*** APP ***/
-import React, { useState } from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import {
@@ -21,6 +20,7 @@ const ALL_PEOPLE = gql`
     people {
       id
       name
+      alwaysFails
     }
   }
 `;
@@ -36,7 +36,7 @@ const ADD_PERSON = gql`
 
 function App() {
   const [name, setName] = useState("");
-  const { loading, data } = useQuery(ALL_PEOPLE);
+  const { client, loading, data, error } = useQuery(ALL_PEOPLE);
 
   const [addPerson] = useMutation(ADD_PERSON, {
     update: (cache, { data: { addPerson: addPersonData } }) => {
@@ -71,8 +71,28 @@ function App() {
         >
           Add person
         </button>
+        <button
+          onClick={() => {
+            client.writeQuery({
+              query: ALL_PEOPLE,
+              data: {
+                people: [
+                  {
+                    __typename: "Person",
+                    id: 1,
+                    name: "Test User",
+                    alwaysFails: "true",
+                  },
+                ],
+              },
+            });
+          }}
+        >
+          Cache write
+        </button>
       </div>
       <h2>Names</h2>
+      {error && <div style={{ color: "red" }}>{error.message}</div>}
       {loading ? (
         <p>Loading…</p>
       ) : (
@@ -104,5 +124,5 @@ root.render(
         </Route>
       </Routes>
     </Router>
-  </ApolloProvider>
+  </ApolloProvider>,
 );
