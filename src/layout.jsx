@@ -1,30 +1,16 @@
-import { Outlet, Link } from "react-router-dom";
-
-export function Layout() {
+export function Layout({ children }) {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Apollo Client Issue Reproduction</h1>
+        <h1>
+          <code>onCompleted</code> Demo
+        </h1>
         <p>
-          This application can be used to demonstrate an error in Apollo Client.
+          This reproduction demonstrates the differences for the{" "}
+          <code>onCompleted</code> callback in 3.7 vs 3.8
         </p>
-
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/subscriptions-wslink">
-                Subscriptions (GraphQLWsLink)
-              </Link>
-            </li>
-          </ul>
-        </nav>
       </header>
-      <div className="Grid-column">
-        <Outlet />
-      </div>
+      <div className="Grid-column">{children}</div>
     </div>
   );
 }
